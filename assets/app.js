@@ -344,18 +344,21 @@
     $('#contadorCarrinho').textContent = qtd;
     const caixa = $('#itensCarrinho');
     if (!estado.carrinho.length) {
-      caixa.innerHTML = `<div class="carrinho-vazio"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1.2 12.2a1 1 0 0 1-1 .8H8.2a1 1 0 0 1-1-.8L6 7z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>Seu carrinho está vazio.<br><small>Escolha tamanho e cor e toque em “Adicionar”.</small></div>`;
+      caixa.innerHTML = `<div class="carrinho-vazio"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1.2 12.2a1 1 0 0 1-1 .8H8.2a1 1 0 0 1-1-.8L6 7z"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7"/></svg>Seu carrinho está vazio.<br><small>Escolha tamanho e cor e toque em “Adicionar”.</small><button class="btn-continuar" data-continuar="1">Ver produtos</button></div>`;
+      $('#resumoCarrinho').textContent = '';
+      $('#limparCarrinho').style.display = 'none';
       $('#rodapeCarrinho').classList.add('oculto');
       return;
     }
     $('#rodapeCarrinho').classList.remove('oculto');
+    $('#limparCarrinho').style.display = '';
     caixa.innerHTML = estado.carrinho.map((i, k) => `
       <div class="item">
-        ${i.foto ? `<img class="item-foto" src="${esc(i.foto)}" alt="" loading="lazy">` : '<div class="item-foto"></div>'}
-        <div>
+        ${i.foto ? `<img class="item-foto" src="${esc(i.foto)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<div class="item-foto"></div>'}
+        <div class="item-info">
           <div class="item-nome">${esc(i.nome)}</div>
-          <div class="item-meta">Tam. ${esc(i.tam)}${i.cor ? ' · ' + esc(nomeCor(i.cor)) : ''}</div>
-          <div class="item-preco">${isNaN(i.preco) || i.preco == null ? 'Sob consulta' : brl(i.preco * i.qtd)}</div>
+          <div class="item-meta">Tam. <b>${esc(i.tam)}</b>${i.cor ? ' · ' + esc(nomeCor(i.cor)) : ''}</div>
+          <div class="item-preco">${isNaN(i.preco) || i.preco == null ? 'Sob consulta' : brl(i.preco * i.qtd)}${i.qtd > 1 && !(isNaN(i.preco) || i.preco == null) ? ` <small>(${brl(i.preco)} cada)</small>` : ''}</div>
         </div>
         <div class="item-lado">
           <div class="item-qtd">
@@ -363,11 +366,13 @@
             <input type="number" inputmode="numeric" min="1" max="999" value="${i.qtd}" data-k="${k}" aria-label="Quantidade de ${esc(i.nome)}" />
             <button data-k="${k}" data-d="1" aria-label="Aumentar quantidade">+</button>
           </div>
-          <button class="item-remover" data-k="${k}" data-remover="1" aria-label="Remover ${esc(i.nome)} do carrinho">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Remover
+          <button class="item-remover" data-k="${k}" data-remover="1" aria-label="Remover ${esc(i.nome)} do carrinho" title="Remover">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>
           </button>
         </div>
       </div>`).join('');
+    const pecas = estado.carrinho.reduce((s, i) => s + i.qtd, 0);
+    $('#resumoCarrinho').textContent = `${pecas} ${pecas === 1 ? 'peça' : 'peças'} · ${estado.carrinho.length} ${estado.carrinho.length === 1 ? 'item' : 'itens'}`;
     $('#totalCarrinho').textContent = brl(total());
   }
 
@@ -444,6 +449,7 @@
     const cliente = lerStorage(CHAVE_CLIENTE, {});
     $('#nomeCliente').value = cliente.nome || '';
     $('#obsCliente').value = cliente.obs || '';
+    if (cliente.nome || cliente.obs) $('#dadosCliente').open = true;
 
     if (CFG.googleAnalytics) {
       const s = document.createElement('script');
@@ -486,6 +492,7 @@
     $('#btnCarrinho').addEventListener('click', () => abrirCarrinho(true));
     $('#fecharCarrinho').addEventListener('click', () => abrirCarrinho(false));
     $('#fundoCarrinho').addEventListener('click', () => abrirCarrinho(false));
+    $('#carrinho').addEventListener('click', e => { if (e.target.closest('[data-continuar]')) abrirCarrinho(false); });
     $('#itensCarrinho').addEventListener('click', e => {
       const b = e.target.closest('button[data-k]'); if (!b) return;
       const k = +b.dataset.k, i = estado.carrinho[k]; if (!i) return;
