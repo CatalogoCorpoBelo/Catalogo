@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Editor de produtos — Corpo Belo</title>
+<link rel="icon" type="image/png" href="image/favicon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/style.css" />
+<script>document.documentElement.setAttribute('data-theme','light');</script>
+<style>
+  body { background: var(--fundo); }
+  .ed-topo { position: sticky; top: 0; z-index: 20; background: var(--preto); color: var(--bege-claro); display: flex; align-items: center; gap: 14px; padding: 12px 20px; flex-wrap: wrap; }
+  .ed-topo img { height: 20px; }
+  .ed-topo h1 { font-family: var(--serif); font-weight: 400; font-size: 22px; flex: 1; min-width: 160px; }
+  .ed-topo .info { font-size: 12.5px; opacity: .75; }
+  .b { height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--borda); background: var(--superficie); font-weight: 500; font-size: 14px; }
+  .b:hover { border-color: var(--bege); }
+  .b.pri { background: var(--dourado); border-color: var(--dourado); color: var(--preto); }
+  .b.pri:hover { background: var(--bege); }
+  .b.perigo { color: var(--vermelho); }
+  .b.fino { height: 34px; padding: 0 12px; font-size: 13px; }
+  .ed { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 64px); }
+  .lista { border-right: 1px solid var(--borda); background: var(--superficie); display: flex; flex-direction: column; max-height: calc(100vh - 64px); position: sticky; top: 64px; }
+  .lista-topo { padding: 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--borda); }
+  .lista-topo input, .lista-topo select { height: 40px; border: 1px solid var(--borda); border-radius: 10px; padding: 0 12px; background: var(--fundo); }
+  .itens { overflow-y: auto; flex: 1; }
+  .it { display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--borda); cursor: pointer; align-items: center; }
+  .it:hover { background: var(--fundo); }
+  .it.sel { background: var(--bege-claro); }
+  .it img, .it .sf { width: 44px; height: 54px; object-fit: cover; border-radius: 6px; background: var(--bege-claro); }
+  .it .n { font-size: 13.5px; font-weight: 500; line-height: 1.25; }
+  .it .m { font-size: 12px; color: var(--texto-suave); }
+  .it.off { opacity: .45; }
+  .form { padding: 24px clamp(16px, 3vw, 40px) 120px; max-width: 980px; }
+  .form h2 { font-family: var(--serif); font-weight: 400; font-size: 30px; margin-bottom: 4px; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 24px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .cp { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; font-size: 13px; font-weight: 500; color: var(--texto-suave); }
+  .cp small { font-weight: 400; }
+  .cp input, .cp textarea, .cp select { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--borda); background: var(--superficie); font-size: 15px; color: var(--texto); }
+  .cp input:focus, .cp textarea:focus { outline: none; border-color: var(--dourado); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--borda); background: var(--superficie); font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+  .chip.on { background: var(--preto); color: var(--bege); border-color: var(--preto); }
+  .chip i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.15); }
+  .sw { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--texto); cursor: pointer; }
+  .sw input { width: 20px; height: 20px; accent-color: var(--dourado); }
+  .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
+  .ft { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--borda); background: var(--bege-claro); aspect-ratio: 4/5; }
+  .ft img { width: 100%; height: 100%; object-fit: cover; }
+  .ft .ctl { position: absolute; left: 4px; right: 4px; bottom: 4px; display: flex; justify-content: space-between; gap: 4px; }
+  .ft .ctl button { flex: 1; height: 26px; border-radius: 6px; border: none; background: rgba(255,255,255,.92); font-size: 13px; }
+  .ft .num { position: absolute; top: 4px; left: 4px; background: var(--preto); color: var(--bege); font-size: 11px; padding: 2px 7px; border-radius: 999px; }
+  .ft .erro { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-size: 11px; color: var(--vermelho); padding: 6px; }
+  .add-foto { display: flex; gap: 8px; }
+  .add-foto input { flex: 1; }
+  .previa { font-size: 13px; color: var(--texto-suave); margin-top: -8px; margin-bottom: 16px; }
+  .previa b { color: var(--vermelho); }
+  .aviso-topo { background: #FFF6E5; color: #6B4A10; border: 1px solid #F1D9A6; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 18px; display: none; }
+  .aviso-topo.vis { display: block; }
+  .vazio-ed { padding: 80px 20px; text-align: center; color: var(--texto-suave); }
+  @media (max-width: 800px) {
+    .ed { grid-template-columns: 1fr; }
+    .lista { position: static; max-height: 46vh; border-right: none; border-bottom: 1px solid var(--borda); }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="ed-topo">
+  <img src="image/logo-bege.png" alt="Corpo Belo" />
+  <h1>Editor de produtos</h1>
+  <span class="info" id="status">—</span>
+  <a class="b fino" href="./" target="_blank" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--texto)">Ver catálogo</a>
+  <button class="b pri" id="baixar">⬇ Baixar produtos.js</button>
+</header>
+
+<div class="ed">
+  <aside class="lista">
+    <div class="lista-topo">
+      <button class="b pri" id="novo">+ Novo produto</button>
+      <input type="search" id="busca" placeholder="Buscar por nome ou código…" />
+      <select id="filtroCat"><option value="">Todas as categorias</option></select>
+    </div>
+    <div class="itens" id="itens"></div>
+  </aside>
+
+  <section class="form" id="form">
+    <div class="aviso-topo" id="avisoRascunho">
+      Você tem alterações salvas apenas <b>neste navegador</b>. Para que apareçam no site, clique em <b>Baixar produtos.js</b> e envie o arquivo ao GitHub.
+      <button class="b fino" id="descartar" style="margin-left:8px">Descartar alterações</button>
+    </div>
+    <div class="vazio-ed" id="vazio">Escolha um produto na lista ao lado ou clique em <b>+ Novo produto</b>.</div>
+    <div id="campos" hidden>
+      <h2 id="tituloForm">Produto</h2>
+      <div class="acoes">
+        <button class="b fino" data-a="subir">↑ Subir</button>
+        <button class="b fino" data-a="descer">↓ Descer</button>
+        <button class="b fino" data-a="duplicar">⧉ Duplicar</button>
+        <button class="b fino perigo" data-a="excluir">Excluir</button>
+      </div>
+
+      <label class="sw" style="margin-bottom:18px"><input type="checkbox" id="f-ativo" /> Produto visível no catálogo</label>
+
+      <div class="grid2">
+        <label class="cp">Nome do produto <input id="f-nome" placeholder="Ex.: 2820DS - Modelador Short" /></label>
+        <label class="cp">Categoria <input id="f-categoria" list="listaCats" placeholder="Escolha ou digite uma nova" /></label>
+      </div>
+      <datalist id="listaCats"></datalist>
+
+      <label class="cp">Descrição <textarea id="f-descricao" rows="3"></textarea></label>
+
+      <div class="grid3">
+        <label class="cp">Preço (R$) <input id="f-preco" inputmode="decimal" placeholder="164,90" /></label>
+        <label class="cp">Desconto (%) <small>0 = sem promoção</small><input id="f-desconto" type="number" min="0" max="100" /></label>
+        <label class="cp">Selo de destaque <small>opcional</small><input id="f-destaque" placeholder="Ex.: Mais vendido, Novo" /></label>
+      </div>
+      <div class="previa" id="previaPreco"></div>
+
+      <div class="cp">Cores disponíveis <small>toque para marcar</small><div class="chips" id="f-cores"></div></div>
+
+      <div class="cp">Tamanhos <small>toque para marcar, ou digite abaixo separados por vírgula</small>
+        <div class="chips" id="chipsTam"></div>
+        <input id="f-tamanhos" placeholder="PP,P,M,G,GG" />
+      </div>
+
+      <div class="grid2">
+        <label class="cp">Código interno (id) <small>não repetir</small><input id="f-id" /></label>
+        <label class="cp">Imagem da tabela de medidas <small>link — opcional</small><input id="f-tabela" placeholder="https://…" /></label>
+      </div>
+
+      <div class="cp">Fotos <small>cole o link da imagem e clique em Adicionar. A primeira é a capa.</small>
+        <div class="add-foto"><input id="novaFoto" placeholder="https://i.postimg.cc/…/foto.jpg" /><button class="b" id="addFoto">Adicionar</button></div>
+        <div class="fotos" id="fotos"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="config.js"></script>
+<script>document.write('<script src="produtos.js?v=' + Date.now() + '"><\/script>');</script>
+<script>
+(function () {
+  const CFG = window.CATALOGO_CONFIG || {};
+  const RASCUNHO = 'cb-editor-rascunho-v1';
+  const $ = s => document.querySelector(s);
+  const original = JSON.stringify(window.PRODUTOS || []);
+  let dados;
+  try { const r = localStorage.getItem(RASCUNHO); dados = r ? JSON.parse(r) : null; } catch (e) { dados = null; }
+  const temRascunho = !!dados && JSON.stringify(dados) !== original;
+  if (!dados) dados = JSON.parse(original);
+  let atual = -1;
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const lista = v => (Array.isArray(v) ? v : String(v || '').split(',')).map(x => String(x).trim()).filter(Boolean);
+  const TAMS = ['EPP', 'PP', 'P', 'M', 'G', 'GG', 'EGG', 'EXGG', 'Único'];
+
+  function salvar() {
+    try { localStorage.setItem(RASCUNHO, JSON.stringify(dados)); } catch (e) {}
+    const mudou = JSON.stringify(dados) !== original;
+    $('#avisoRascunho').classList.toggle('vis', mudou);
+    $('#status').textContent = `${dados.length} produtos · ${dados.filter(p => p.ativo !== false).length} visíveis` + (mudou ? ' · alterações não publicadas' : '');
+  }
+
+  function categorias() { return [...new Set(dados.map(p => p.categoria).filter(Boolean))]; }
+
+  function desenharLista() {
+    const t = $('#busca').value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const c = $('#filtroCat').value;
+    const cats = categorias();
+    $('#filtroCat').innerHTML = '<option value="">Todas as categorias</option>' + cats.map(x => `<option ${x === c ? 'selected' : ''}>${esc(x)}</option>`).join('');
+    $('#listaCats').innerHTML = cats.map(x => `<option value="${esc(x)}">`).join('');
+    $('#itens').innerHTML = dados.map((p, i) => {
+      const alvo = (p.nome + ' ' + p.id).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+      if (t && !alvo.includes(t)) return '';
+      if (c && p.categoria !== c) return '';
+      const f = lista(p.fotos)[0];
+      return `<div class="it ${i === atual ? 'sel' : ''} ${p.ativo === false ? 'off' : ''}" data-i="${i}">
+        ${f ? `<img src="${esc(f)}" loading="lazy" alt="" onerror="this.style.visibility='hidden'">` : '<div class="sf"></div>'}
+        <div><div class="n">${esc(p.nome || '(sem nome)')}</div><div class="m">${esc(p.categoria || '')} · R$ ${esc(p.preco || '—')}${p.ativo === false ? ' · oculto' : ''}</div></div></div>`;
+    }).join('');
+  }
+
+  function abrir(i) {
+    atual = i;
+    const p = dados[i];
+    $('#vazio').hidden = true; $('#campos').hidden = false;
+    $('#tituloForm').textContent = p.nome || 'Novo produto';
+    $('#f-ativo').checked = p.ativo !== false;
+    $('#f-nome').value = p.nome || '';
+    $('#f-categoria').value = p.categoria || '';
+    $('#f-descricao').value = p.descricao || '';
+    $('#f-preco').value = p.preco || '';
+    $('#f-desconto').value = p.desconto || 0;
+    $('#f-destaque').value = p.destaque || '';
+    $('#f-tamanhos').value = lista(p.tamanhos).join(',');
+    $('#f-id').value = p.id || '';
+    $('#f-tabela').value = p.tabelaMedidas || '';
+    desenharCores(); desenharTams(); desenharFotos(); previaPreco(); desenharLista();
+    if (innerWidth < 800) $('#form').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function desenharCores() {
+    const sel = lista(dados[atual].cores);
+    $('#f-cores').innerHTML = Object.keys(CFG.cores || {}).map(c =>
+      `<button type="button" class="chip ${sel.includes(c) ? 'on' : ''}" data-cor="${esc(c)}"><i style="background:${esc(CFG.cores[c])}"></i>${esc(c.replace(/-/g, ' '))}</button>`).join('');
+  }
+  function desenharTams() {
+    const sel = lista($('#f-tamanhos').value);
+    $('#chipsTam').innerHTML = TAMS.map(t => `<button type="button" class="chip ${sel.includes(t) ? 'on' : ''}" data-tam="${t}">${t}</button>`).join('');
+  }
+  function desenharFotos() {
+    const fs = lista(dados[atual].fotos);
+    $('#fotos').innerHTML = fs.map((f, k) => `<div class="ft"><span class="num">${k === 0 ? 'Capa' : k + 1}</span>
+      <img src="${esc(f)}" alt="" onerror="this.insertAdjacentHTML('afterend','<div class=erro>Link não abre como imagem</div>')">
+      <div class="ctl"><button data-f="esq" data-k="${k}" title="Mover para a esquerda">←</button><button data-f="del" data-k="${k}" title="Remover">✕</button><button data-f="dir" data-k="${k}" title="Mover para a direita">→</button></div></div>`).join('')
+      || '<div style="font-size:13px;color:var(--texto-suave)">Nenhuma foto ainda.</div>';
+  }
+  function previaPreco() {
+    const n = parseFloat(String($('#f-preco').value).replace(/[R$\s.]/g, '').replace(',', '.'));
+    const d = parseInt($('#f-desconto').value) || 0;
+    const fmt = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+    $('#previaPreco').innerHTML = isNaN(n) ? 'Sem preço: aparece como "Sob consulta".' : d > 0 ? `No site: <s>${fmt(n)}</s> <b>${fmt(n * (1 - d / 100))}</b> (${d}% OFF)` : `No site: ${fmt(n)}`;
+  }
+
+  // Campos de texto → dados
+  const mapa = { 'f-nome': 'nome', 'f-categoria': 'categoria', 'f-descricao': 'descricao', 'f-preco': 'preco', 'f-destaque': 'destaque', 'f-id': 'id', 'f-tabela': 'tabelaMedidas', 'f-tamanhos': 'tamanhos' };
+  Object.keys(mapa).forEach(id => $('#' + id).addEventListener('input', e => {
+    if (atual < 0) return;
+    dados[atual][mapa[id]] = e.target.value.trim();
+    if (id === 'f-nome') $('#tituloForm').textContent = e.target.value || 'Novo produto';
+    if (id === 'f-tamanhos') desenharTams();
+    if (id === 'f-preco') previaPreco();
+    salvar(); desenharLista();
+  }));
+  $('#f-desconto').addEventListener('input', e => { dados[atual].desconto = Math.max(0, Math.min(100, parseInt(e.target.value) || 0)); previaPreco(); salvar(); });
+  $('#f-ativo').addEventListener('change', e => { dados[atual].ativo = e.target.checked; salvar(); desenharLista(); });
+
+  $('#f-cores').addEventListener('click', e => {
+    const b = e.target.closest('[data-cor]'); if (!b) return;
+    let s = lista(dados[atual].cores); const c = b.dataset.cor;
+    s = s.includes(c) ? s.filter(x => x !== c) : s.concat(c);
+    dados[atual].cores = s.join(', '); desenharCores(); salvar();
+  });
+  $('#chipsTam').addEventListener('click', e => {
+    const b = e.target.closest('[data-tam]'); if (!b) return;
+    let s = lista($('#f-tamanhos').value); const t = b.dataset.tam;
+    s = s.includes(t) ? s.filter(x => x !== t) : TAMS.filter(x => s.includes(x) || x === t).concat(s.filter(x => !TAMS.includes(x)));
+    $('#f-tamanhos').value = s.join(','); dados[atual].tamanhos = s.join(','); desenharTams(); salvar();
+  });
+
+  function addFoto() {
+    const v = $('#novaFoto').value.trim(); if (!v || atual < 0) return;
+    v.split(/\s+/).filter(Boolean).forEach(u => { dados[atual].fotos = lista(dados[atual].fotos).concat(u); });
+    $('#novaFoto').value = ''; desenharFotos(); salvar(); desenharLista();
+  }
+  $('#addFoto').addEventListener('click', addFoto);
+  $('#novaFoto').addEventListener('keydown', e => { if (e.key === 'Enter') addFoto(); });
+  $('#fotos').addEventListener('click', e => {
+    const b = e.target.closest('[data-f]'); if (!b) return;
+    const fs = lista(dados[atual].fotos); const k = +b.dataset.k;
+    if (b.dataset.f === 'del') fs.splice(k, 1);
+    if (b.dataset.f === 'esq' && k > 0) [fs[k - 1], fs[k]] = [fs[k], fs[k - 1]];
+    if (b.dataset.f === 'dir' && k < fs.length - 1) [fs[k + 1], fs[k]] = [fs[k], fs[k + 1]];
+    dados[atual].fotos = fs; desenharFotos(); salvar(); desenharLista();
+  });
+
+  $('.acoes').addEventListener('click', e => {
+    const a = e.target.closest('[data-a]')?.dataset.a; if (!a || atual < 0) return;
+    if (a === 'subir' && atual > 0) { [dados[atual - 1], dados[atual]] = [dados[atual], dados[atual - 1]]; atual--; }
+    if (a === 'descer' && atual < dados.length - 1) { [dados[atual + 1], dados[atual]] = [dados[atual], dados[atual + 1]]; atual++; }
+    if (a === 'duplicar') { const c = JSON.parse(JSON.stringify(dados[atual])); c.id = novoId(); c.nome += ' (cópia)'; dados.splice(atual + 1, 0, c); atual++; }
+    if (a === 'excluir') { if (!confirm('Excluir "' + dados[atual].nome + '"?\n\nDica: para apenas esconder, desmarque "Produto visível".')) return; dados.splice(atual, 1); atual = -1; $('#campos').hidden = true; $('#vazio').hidden = false; salvar(); desenharLista(); return; }
+    salvar(); abrir(atual);
+  });
+
+  function novoId() { return String(dados.reduce((m, p) => Math.max(m, parseInt(p.id) || 0), 0) + 1); }
+  $('#novo').addEventListener('click', () => {
+    const cat = $('#filtroCat').value || '';
+    dados.push({ id: novoId(), nome: '', categoria: cat, descricao: '', preco: '', desconto: 0, cores: 'bege, preto', tamanhos: 'PP,P,M,G,GG,EGG,EXGG', destaque: '', ativo: true, tabelaMedidas: '', fotos: [] });
+    $('#busca').value = ''; salvar(); abrir(dados.length - 1); $('#f-nome').focus();
+  });
+  $('#itens').addEventListener('click', e => { const it = e.target.closest('.it'); if (it) abrir(+it.dataset.i); });
+  $('#busca').addEventListener('input', desenharLista);
+  $('#filtroCat').addEventListener('change', desenharLista);
+  $('#descartar').addEventListener('click', () => {
+    if (!confirm('Descartar todas as alterações feitas neste navegador?')) return;
+    dados = JSON.parse(original); atual = -1; $('#campos').hidden = true; $('#vazio').hidden = false; salvar(); desenharLista();
+  });
+
+  // Gera o arquivo produtos.js no mesmo formato do site
+  function gerarArquivo() {
+    const J = v => JSON.stringify(v);
+    const ks = ['id', 'nome', 'categoria', 'descricao', 'preco', 'desconto', 'cores', 'tamanhos', 'destaque', 'ativo', 'tabelaMedidas'];
+    let s = `/* =====================================================================
+   CORPO BELO — CADASTRO DE PRODUTOS
+   ---------------------------------------------------------------------
+   Jeito mais fácil de editar: abra  SEU-SITE/editor.html , faça as
+   alterações e clique em "Baixar produtos.js". Depois envie o arquivo
+   para o GitHub substituindo este (veja o LEIA-ME.md).
+
+   Também dá para editar aqui direto no GitHub (lápis ✏️). Cada produto
+   fica entre { } e termina com vírgula. Mantenha as aspas.
+   ===================================================================== */
+
+window.PRODUTOS = [\n`;
+    dados.forEach(p => {
+      s += '  {\n';
+      ks.forEach(k => {
+        let v = p[k];
+        if (k === 'desconto') v = parseInt(v) || 0;
+        else if (k === 'ativo') v = v !== false;
+        else v = v == null ? '' : String(v);
+        s += `    ${k}: ${J(v)},\n`;
+      });
+      s += '    fotos: [\n' + lista(p.fotos).map(f => `      ${J(f)},\n`).join('') + '    ],\n  },\n';
+    });
+    return s + '];\n';
+  }
+  $('#baixar').addEventListener('click', () => {
+    const ids = dados.map(p => String(p.id)); const rep = ids.filter((x, i) => ids.indexOf(x) !== i);
+    const semNome = dados.filter(p => !p.nome).length;
+    if (rep.length && !confirm('Atenção: códigos (id) repetidos: ' + [...new Set(rep)].join(', ') + '. Baixar mesmo assim?')) return;
+    if (semNome && !confirm(semNome + ' produto(s) sem nome não aparecerão no site. Continuar?')) return;
+    const blob = new Blob([gerarArquivo()], { type: 'text/javascript;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'produtos.js';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => alert('Arquivo produtos.js baixado!\n\nAgora, no GitHub: Add file → Upload files → envie este arquivo → Commit changes.\nEm 1 a 3 minutos o catálogo atualiza.'), 300);
+  });
+
+  salvar(); desenharLista();
+  if (temRascunho) $('#avisoRascunho').classList.add('vis');
+})();
+</script>
+</body>
+</html>
