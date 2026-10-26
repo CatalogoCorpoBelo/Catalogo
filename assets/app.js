@@ -223,8 +223,7 @@
       </div>
       <div class="card-corpo">
         <div class="card-cat">${esc(p.categoria)}</div>
-        ${partesNome(p.nome).codigo ? `<div class="card-ref">Ref. ${esc(partesNome(p.nome).codigo)}</div>` : ''}
-        <h3 class="card-nome">${esc(partesNome(p.nome).nome)}</h3>
+        <h3 class="card-nome">${esc(p.nome)}</h3>
         ${desc}
         <div><div class="seletor-rotulo">Tamanho: <b data-rotulo="tam">${esc(p.tamanhos[0] || '')}</b></div><div class="opcoes">${tams}</div></div>
         <div><div class="seletor-rotulo">Cor: <b data-rotulo="cor">${esc(nomeCor(p.cores[0]))}</b></div><div class="opcoes">${cores}</div></div>
@@ -358,10 +357,15 @@
           <div class="item-meta">Tam. ${esc(i.tam)}${i.cor ? ' · ' + esc(nomeCor(i.cor)) : ''}</div>
           <div class="item-preco">${isNaN(i.preco) || i.preco == null ? 'Sob consulta' : brl(i.preco * i.qtd)}</div>
         </div>
-        <div class="item-qtd">
-          <button data-k="${k}" data-d="-1" aria-label="Diminuir quantidade">${i.qtd === 1 ? '🗑' : '−'}</button>
-          <span>${i.qtd}</span>
-          <button data-k="${k}" data-d="1" aria-label="Aumentar quantidade">+</button>
+        <div class="item-lado">
+          <div class="item-qtd">
+            <button data-k="${k}" data-d="-1" aria-label="Diminuir quantidade" ${i.qtd <= 1 ? 'disabled' : ''}>−</button>
+            <input type="number" inputmode="numeric" min="1" max="999" value="${i.qtd}" data-k="${k}" aria-label="Quantidade de ${esc(i.nome)}" />
+            <button data-k="${k}" data-d="1" aria-label="Aumentar quantidade">+</button>
+          </div>
+          <button class="item-remover" data-k="${k}" data-remover="1" aria-label="Remover ${esc(i.nome)} do carrinho">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Remover
+          </button>
         </div>
       </div>`).join('');
     $('#totalCarrinho').textContent = brl(total());
@@ -484,11 +488,20 @@
     $('#fundoCarrinho').addEventListener('click', () => abrirCarrinho(false));
     $('#itensCarrinho').addEventListener('click', e => {
       const b = e.target.closest('button[data-k]'); if (!b) return;
-      const i = estado.carrinho[+b.dataset.k]; if (!i) return;
-      i.qtd += +b.dataset.d;
-      if (i.qtd <= 0) estado.carrinho.splice(+b.dataset.k, 1);
+      const k = +b.dataset.k, i = estado.carrinho[k]; if (!i) return;
+      if (b.dataset.remover) { estado.carrinho.splice(k, 1); aviso('Item removido do carrinho'); }
+      else i.qtd = Math.max(1, Math.min(999, i.qtd + +b.dataset.d));
       salvarCarrinho();
     });
+    // quantidade digitada manualmente
+    $('#itensCarrinho').addEventListener('change', e => {
+      const inp = e.target.closest('input[data-k]'); if (!inp) return;
+      const i = estado.carrinho[+inp.dataset.k]; if (!i) return;
+      const n = parseInt(inp.value, 10);
+      if (!n || n < 1) { inp.value = i.qtd; return; }
+      i.qtd = Math.min(999, n); salvarCarrinho();
+    });
+    $('#itensCarrinho').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input[data-k]')) e.target.blur(); });
     $('#limparCarrinho').addEventListener('click', () => {
       if (confirm('Esvaziar o carrinho?')) { estado.carrinho = []; salvarCarrinho(); }
     });
