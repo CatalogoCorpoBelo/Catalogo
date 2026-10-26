@@ -249,7 +249,8 @@ main { max-width: 1240px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 1
 .card-corpo { padding: 18px 18px 6px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .card-cat { font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--bege-escuro); }
 [data-theme="dark"] .card-cat { color: var(--bege); }
-.card-nome { font-family: var(--serif); font-size: 23px; font-weight: 600; line-height: 1.15; }
+.card-nome { font-family: var(--serif); font-size: 24px; font-weight: 600; line-height: 1.15; font-variant-numeric: lining-nums; margin-top: -4px; }
+.card-ref { font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--texto-suave); margin-top: -4px; }
 .card-desc { font-size: 14px; color: var(--texto-suave); line-height: 1.55; }
 .card-desc.recolhida { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .ver-mais { align-self: flex-start; background: none; border: none; font-size: 13px; color: var(--dourado); font-weight: 500; padding: 0; margin-top: -4px; }

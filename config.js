@@ -16,7 +16,6 @@ window.CATALOGO_CONFIG = {
   /* 1) ATENDENTES — para quem o pedido é enviado no WhatsApp.
         Para adicionar alguém, copie uma linha { ... }, e altere. */
   atendentes: [
-    { nome: 'Ricardo', telefone: '5567981082135' },
     { nome: 'Breno',   telefone: '5567993435284' },
   ],
 
@@ -36,7 +35,7 @@ window.CATALOGO_CONFIG = {
 
   /* 3) ORDEM DAS CATEGORIAS NOS BOTÕES.
         Categorias novas cadastradas entram sozinhas no fim. */
-  ordemCategorias: ['Pós Cirúrgico', 'Sutiã', 'Masculino', 'Faixas', 'Placas', 'Pós Parto', 'Estético'],
+  ordemCategorias: ['Pós Cirúrgico', 'Sutiã', 'Masculino', 'Faixas', 'Placas', 'Pós Parto', 'Estético', 'Vestidos Pós-Operatórios'],
 
   /* 4) TAMANHOS usados quando o produto não tiver tamanhos */
   tamanhosPadrao: ['P', 'M', 'G'],

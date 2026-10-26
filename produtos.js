@@ -1310,7 +1310,7 @@ window.PRODUTOS = [
   {
     id: "64",
     nome: "28302 - Robe Chloe",
-    categoria: "Estético",
+    categoria: "Vestidos Pós-Operatórios",
     descricao: "ROBE CHLOE",
     preco: "99,90",
     desconto: 0,
@@ -1332,7 +1332,7 @@ window.PRODUTOS = [
   {
     id: "65",
     nome: "28402 - Vestido Pós",
-    categoria: "Estético",
+    categoria: "Vestidos Pós-Operatórios",
     descricao: "VESTIDO PÓS-OPERATÓRIO COM MANGAS",
     preco: "119,90",
     desconto: 0,
@@ -1353,7 +1353,7 @@ window.PRODUTOS = [
   {
     id: "66",
     nome: "28403 - Vestido Pós",
-    categoria: "Estético",
+    categoria: "Vestidos Pós-Operatórios",
     descricao: "VESTIDO PÓS-OPERATÓRIO LONGO COM MANGAS",
     preco: "149,90",
     desconto: 0,

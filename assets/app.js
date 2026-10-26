@@ -185,6 +185,13 @@
   const ICO_REGUA = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="1.5"/><path d="M6 7v4M10 7v3M14 7v4M18 7v3"/></svg>';
   const ICO_COMP = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></svg>';
 
+  // "2820DS - Modelador Short" → { codigo: "2820DS", nome: "Modelador Short" }
+  function partesNome(n) {
+    n = String(n || '').trim();
+    const m = n.match(/^(\S*\d\S*)\s*(?:-\s+|\s+)(.+)$/);
+    return m ? { codigo: m[1].replace(/-$/, ''), nome: m[2].trim() } : { codigo: '', nome: n };
+  }
+
   function card(p) {
     const fotos = p.fotos.length
       ? `<div class="galeria-trilho">${p.fotos.map((f, i) => `<img src="${esc(f)}" alt="${esc(p.nome)} — foto ${i + 1}" loading="${i === 0 ? 'lazy' : 'lazy'}" draggable="false" onerror="this.style.visibility='hidden'">`).join('')}</div>`
@@ -216,7 +223,8 @@
       </div>
       <div class="card-corpo">
         <div class="card-cat">${esc(p.categoria)}</div>
-        <h3 class="card-nome">${esc(p.nome)}</h3>
+        ${partesNome(p.nome).codigo ? `<div class="card-ref">Ref. ${esc(partesNome(p.nome).codigo)}</div>` : ''}
+        <h3 class="card-nome">${esc(partesNome(p.nome).nome)}</h3>
         ${desc}
         <div><div class="seletor-rotulo">Tamanho: <b data-rotulo="tam">${esc(p.tamanhos[0] || '')}</b></div><div class="opcoes">${tams}</div></div>
         <div><div class="seletor-rotulo">Cor: <b data-rotulo="cor">${esc(nomeCor(p.cores[0]))}</b></div><div class="opcoes">${cores}</div></div>
@@ -376,8 +384,11 @@
 
   function montarBotoesEnvio() {
     const wpp = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm5.8 15.7c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.6.7.6-.1 1.9-.8 2.1-1.5.3-.7.3-1.3.2-1.5l-.6-.3z"/></svg>';
-    $('#botoesEnvio').innerHTML = (CFG.atendentes || []).map((a, i) =>
-      `<a class="btn-enviar" href="#" data-atendente="${i}" target="_blank" rel="noopener">${wpp}${esc(a.nome)}</a>`).join('');
+    const ats = CFG.atendentes || [];
+    const unico = ats.length === 1;
+    $('.enviar-titulo').style.display = unico ? 'none' : '';
+    $('#botoesEnvio').innerHTML = ats.map((a, i) =>
+      `<a class="btn-enviar" href="#" data-atendente="${i}" target="_blank" rel="noopener">${wpp}${unico ? 'Enviar pedido pelo WhatsApp' : esc(a.nome)}</a>`).join('');
   }
 
   function abrirCarrinho(abrir) {
