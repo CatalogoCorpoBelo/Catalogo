@@ -1129,10 +1129,10 @@ window.PRODUTOS = [
     ativo: true,
     tabelaMedidas: "https://i.postimg.cc/nhQSCKsH/Whats-App-Image-2026-06-01-at-15-31-16-(2).jpg",
     fotos: [
-      "https://i.postimg.cc/3x4SMC1y/CB-680.jpg",
-      "https://i.postimg.cc/0yMWgdnM/CB-666.jpg",
       "https://i.postimg.cc/SQdtcKjN/CB-659.jpg",
       "https://i.postimg.cc/x8fxBwp8/CB-656.jpg",
+      "https://i.postimg.cc/0yMWgdnM/CB-666.jpg",
+      "https://i.postimg.cc/3x4SMC1y/CB-680.jpg",
       "https://i.postimg.cc/1XmCbk7y/CB-455.jpg",
       "https://i.postimg.cc/PxzV3X4B/CB-448.jpg",
       "https://i.postimg.cc/x8fxBwx7/CB-446.jpg",
